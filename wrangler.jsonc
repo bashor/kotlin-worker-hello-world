@@ -1,0 +1,13 @@
+{
+  "name" : "hi-kotlin-wasm",
+  "workers_dev" : true,
+  "compatibility_date" : "2026-03-03",
+  "main" : "build/wasm/packages/kotlin-worker-hello-world/kotlin/main.mjs",
+  "no_bundle" : true,
+  "rules": [
+    {
+      "type": "ESModule",
+      "globs": ["**/*.mjs", "**/*.js"],
+    },
+  ]
+}

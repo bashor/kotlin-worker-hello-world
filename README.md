@@ -22,7 +22,12 @@ That will compile your code into a WebAssembly executable and JavaScript glue co
 after which you can run `wrangler deploy` to push it to Cloudflare:
 
 ```shell
-npx wrangler@latest deploy build/js/packages/kotlin-worker-hello-world-wasm-js/kotlin/kotlin-worker-hello-world.js
+npx wrangler@latest deploy
+```
+
+Or `wrangler dev` to test it locally:
+```shell
+npx wrangler@latest dev 
 ```
 
 ## Learn more

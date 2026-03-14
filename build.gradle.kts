@@ -1,14 +1,13 @@
+@file:OptIn(ExperimentalWasmDsl::class)
+
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
 
 plugins {
-    kotlin("multiplatform") version "1.9.22"
-    // kotlin("multiplatform") version "2.0.0-RC1"
+    kotlin("multiplatform") version "2.3.20-RC3"
 }
-
-group = "org.example"
-version = "1.0-SNAPSHOT"
 
 repositories {
     mavenCentral()
@@ -16,12 +15,8 @@ repositories {
 
 kotlin {
     wasmJs {
-        nodejs {
-        }
+        nodejs()
         binaries.executable()
-
-        // Comment the next line to turn off optimization by Binaryen
-        applyBinaryen()
 
         // Workaround for https://youtrack.jetbrains.com/issue/KT-66972
         compilations
@@ -32,13 +27,13 @@ kotlin {
                                 it.compilerOptions.moduleName
                             }
                             val fileName = moduleName.map { module ->
-                                "$module.uninstantiated.mjs"
+                                "$module.mjs"
                             }
 
                             val mjsFile: Provider<RegularFile> = linkTask.flatMap {
                                 it.destinationDirectory.file(fileName.get())
                             }
-                            
+
                             doLast {
                                 val module = moduleName.get()
                                 val file = mjsFile.get().asFile
@@ -46,16 +41,15 @@ kotlin {
                                 val newText = text
                                     .replace("if \\(!\\w+( && !\\w+)*\\) \\{[^\\}]*\\}".toRegex(), "")
                                     .replace(
-                                        "(if \\(isBrowser\\) \\{\\s*wasmInstance[^\\}]*\\})".toRegex(),
-                                        """
-                                        $1
-                                        
-                                              const isWorker = navigator.userAgent.includes("Workers")
-                                              if (isWorker) {
-                                                  const { default: wasmModule } = await import('./$module.wasm');
-                                                  wasmInstance = (await WebAssembly.instantiate(wasmModule, importObject));
-                                              }
-                                        """.trimIndent()
+                                    "(if \\(isBrowser\\) \\{\\s*wasmInstance[^\\}]*\\})".toRegex(),
+                                    """
+                                   |
+                                   |  const isWorker = navigator.userAgent.includes("Workers")
+                                   |  if (isWorker) {
+                                   |      const { default: wasmModule } = await import('./$module.wasm');
+                                   |      wasmInstance = (await WebAssembly.instantiate(wasmModule, importObject, wasmOptions));
+                                   |  }
+                                   |  """.trimMargin()
                                     )
 
                                 file.writeText(newText)
@@ -64,13 +58,12 @@ kotlin {
                     }
             }
     }
-}
-
-// To run in Node.js
-rootProject.the<NodeJsRootExtension>().apply {
-    nodeVersion = "22.0.0-nightly2024021536dcd399c0"
-    nodeDownloadBaseUrl = "https://nodejs.org/download/nightly"
-}
-tasks.withType<KotlinNpmInstallTask>().configureEach {
-    args.add("--ignore-engines")
+    
+    sourceSets {
+        wasmJsMain {
+            dependencies {
+                implementation("org.jetbrains.kotlinx:kotlinx-browser:0.5.0")
+            }
+        }
+    }
 }
