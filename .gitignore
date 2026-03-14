@@ -13,3 +13,4 @@ node_modules/
 .gradle
 .DS_Store
 kotlin-js-store
+/tmp/
