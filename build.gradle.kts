@@ -6,7 +6,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask
 import org.jetbrains.kotlin.gradle.targets.js.ir.*
 
 plugins {
-    kotlin("multiplatform") version "2.3.20-RC3"
+    kotlin("multiplatform") version "2.5.0-Beta2"
 }
 
 repositories {
