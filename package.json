@@ -1,11 +1,5 @@
 {
   "name": "kotlin-worker-hello-world",
   "version": "1.0.0",
-  "description": "Kotlin hello world for Cloudflare Workers",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "{{ authors }}",
-  "license": "MIT"
+  "description": "Kotlin hello world for Cloudflare Workers"
 }
