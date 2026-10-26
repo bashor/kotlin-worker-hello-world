@@ -15,7 +15,7 @@ Further documentation for Wrangler can be found [here](https://developers.cloudf
 After setting up your environment, run the following command:
 
 ```shell
-./gradlew :compileProductionExecutableKotlinWasmJs
+./gradlew :wasmJsProductionExecutableCompileSync
 ```
 
 That will compile your code into a WebAssembly executable and JavaScript glue code, 
